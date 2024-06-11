@@ -7,14 +7,17 @@ import path from "path"
 import { fileURLToPath } from "url"
 
 const app = express();
+
+app.use(express.json());
+app.use(cors());
 //*get the current file and directory
 
 const __filename = fileURLToPath(import.meta.url); //absolute path to the current file
 const __dirname = path.dirname(__filename); //directory name of the current file
 
-app.use(express.static(path.join(__dirname, "frontend/dist"))); //specify the path for our frontend (current directory + path we want to get in)
 
 //* Server our files statically from the server side
+app.use(express.static(path.join(__dirname, "frontend/dist"))); //specify the path for our frontend (current directory + path we want to get in)
 
 //* Multer configuration:
 
@@ -44,9 +47,6 @@ if (process.env.NODE_ENV === "development") {
 const upload = multer({ storage: storage });
 
 
-app.use(express.json());
-app.use(cors());
-
 //* Store your own MongoDB connection string in .env file!
 try {
   await mongoose.connect(process.env.MONGODB_CONNECTION_STRING);
@@ -56,8 +56,8 @@ try {
   console.log("Database connection failed... :(");
 }
 
-//* Default route
-app.get("/", async (req, res) => {
+//* route for getting all albums
+app.get("/albums", async (req, res) => {
   const albums = await Album.find();
   res.status(200).json(albums);
 });
