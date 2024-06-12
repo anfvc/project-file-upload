@@ -24,7 +24,7 @@ async function verifyCaptcha(req, res, next) {
 
   next();
 
-  //   if (response.ok) {
+  //   if (response.ok) { in this case the response will always be ok,
   //     const data = await response.json();
   //     console.log(data);
   //     next()
