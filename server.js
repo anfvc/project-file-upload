@@ -102,7 +102,7 @@ app.patch("/update/:id", upload.single("jacket"), async (req, res, next) => {
 
 //All other requests except for the 4 server routes above
 app.get("*", (req, res, next) => {
-  res.sendFile(__dirname + "/frontend/dist/assets/index.html");
+  res.sendFile(__dirname + "/frontend/dist");
 });
 
 //* Global Error Handling
