@@ -4,7 +4,9 @@ import Album from "./Model/Album.js";
 import cors from "cors";
 import multer from "multer";
 import path from "path"
+import verifyCaptcha from "./middleware/verifyCaptcha.js";
 import { fileURLToPath } from "url"
+
 
 const app = express();
 
@@ -17,7 +19,7 @@ const __dirname = path.dirname(__filename); //directory name of the current file
 
 
 //* Server our files statically from the server side
-app.use(express.static(path.join(__dirname, "frontend/dist"))); //specify the path for our frontend (current directory + path we want to get in)
+app.use(express.static(path.join(__dirname, "./frontend/dist"))); //specify the path for our frontend (current directory + path we want to get in)
 
 //* Multer configuration:
 
@@ -35,7 +37,7 @@ if (process.env.NODE_ENV === "development") {
 } else {
   storage = multer.diskStorage({
     destination: (req, file, callback) => {
-      callback(null, "./frontend/dist/");
+      callback(null, "./frontend/dist");
     },
     filename: (req, file, cb) => {
       cb(null, file.originalname);
@@ -62,7 +64,7 @@ app.get("/albums", async (req, res) => {
   res.status(200).json(albums);
 });
 
-app.post("/add", upload.single("jacket"), async (req, res, next) => {
+app.post("/add", upload.single("jacket"), verifyCaptcha, async (req, res, next) => {
   try {
     let newAlbum = new Album(req.body);
     if (req.file) {
@@ -102,7 +104,7 @@ app.patch("/update/:id", upload.single("jacket"), async (req, res, next) => {
 
 //All other requests except for the 4 server routes above
 app.get("*", (req, res, next) => {
-  res.sendFile(__dirname + "/frontend/dist");
+  res.sendFile(__dirname + "./frontend/dist");
 });
 
 //* Global Error Handling
